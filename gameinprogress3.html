@@ -1,0 +1,2421 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Game in progress 3</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="gameinprogress3.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Indie+Flower|Lobster"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Noto+Sans+HK:wght@100;300;400;500;700;900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+    />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+      src="https://kit.fontawesome.com/147b2895a5.js"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      //getting ready the info stored in session storage
+      const eastPlayer = sessionStorage.getItem("eastPlayer");
+      const southPlayer = sessionStorage.getItem("southPlayer");
+      const westPlayer = sessionStorage.getItem("westPlayer");
+      const northPlayer = sessionStorage.getItem("northPlayer");
+
+      // const smallestfan = sessionStorage.getItem("smallestfan");
+      // const biggestfan = sessionStorage.getItem("biggestfan");
+      // const fullNotfull = sessionStorage.getItem("fullNotfull");
+      // const passZhuang = sessionStorage.getItem("passZhuang");
+      // const customFSArray = JSON.parse(sessionStorage.getItem("customFSArray"));
+      // const finalzimoArray = JSON.parse(
+      //   sessionStorage.getItem("finalzimoArray")
+      // );
+      // const finalcc0Array = JSON.parse(sessionStorage.getItem("finalcc0Array"));
+      // const finalcc1Array = JSON.parse(sessionStorage.getItem("finalcc1Array"));
+      // const finalcc2Array = JSON.parse(sessionStorage.getItem("cc2Array"));
+      // const finalcc3Array = JSON.parse(sessionStorage.getItem("finalcc3Array"));
+
+      const smallestfan = 3;
+      const biggestfan = 14;
+      const fullNotfull = "全銃";
+      const passZhuang = "和牌過莊";
+      const customFSArray = [
+        "三番",
+        "四番",
+        "五番",
+        "六番",
+        "七番",
+        "八番",
+        "九番",
+        "十番",
+        "十一番",
+        "十二番",
+        "十三番",
+        "十四番",
+      ];
+      const finalzimoArray = [
+        0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8,
+      ];
+      const finalcc1Array = [
+        0.9, 1.2, 1.5, 1.8, 2.1, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9, 4.2,
+      ];
+      const finalcc2Array = [
+        0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8,
+      ];
+      const finalcc3Array = [
+        0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4,
+      ];
+      const finalcc0Array = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+      const masterArray = JSON.parse(sessionStorage.getItem("masterArray"));
+      const masterArrayLength = masterArray.length;
+      const multiplewinnerArray = JSON.parse(
+        sessionStorage.getItem("multiplewinnerArray"),
+      );
+      console.log(
+        smallestfan,
+        biggestfan,
+        fullNotfull,
+        passZhuang,
+        customFSArray,
+        finalzimoArray,
+        finalcc0Array,
+        finalcc1Array,
+        finalcc2Array,
+        finalcc3Array,
+        masterArray,
+        multiplewinnerArray,
+      );
+
+      const newPlayerArray = [];
+      let vacantIndex;
+      const playerArray = [eastPlayer, southPlayer, westPlayer, northPlayer];
+      for (let i = 0; i < 4; i++) {
+        if (playerArray[i] !== "vacant") {
+          newPlayerArray.push(playerArray[i]);
+        } else if (playerArray[i] === "vacant") {
+          vacantIndex = i;
+        }
+      }
+      console.log(newPlayerArray, vacantIndex);
+    </script>
+  </head>
+
+  <body id="body">
+    <div
+      id="tableDiv"
+      style="overflow-x: auto; justify-content: center; display: flex"
+    >
+      <table id="table">
+        <thead>
+          <tr>
+            <th id="th1" class="th col1">局數</th>
+            <th id="th2" class="th col2">圈數</th>
+            <th id="th3" class="th col3">圈</th>
+            <th id="th4" class="th col4">莊家</th>
+            <th id="th5" class="th">番數</th>
+            <th id="th6" class="th">贏家</th>
+            <th id="th7" class="th">胡牌類型</th>
+            <th id="th8" class="th">最大輸家</th>
+            <th id="th9" class="th"></th>
+            <th id="th10" class="th"></th>
+            <th id="th11" class="th"></th>
+            <!-- <th id="th12" class="th"></th> -->
+          </tr>
+        </thead>
+        <tbody id="tbody1"></tbody>
+        <tbody id="tbody2">
+          <tr>
+            <td class="td2 col1">局數</td>
+            <td class="td2 col2">圈數</td>
+            <td class="td2 col3">圈</td>
+            <td class="td2 col4">莊家</td>
+            <td class="td2">番數</td>
+            <td class="td2">贏家</td>
+            <td class="td2">胡牌類型</td>
+            <td class="td2">最大輸家</td>
+            <td class="td2" id="td9"></td>
+            <td class="td2" id="td10"></td>
+            <td class="td2" id="td11"></td>
+            <!-- <td class="td2" id="td12"></td> -->
+          </tr>
+          <tr>
+            <td class="td2 col1">
+              <button type="button" id="forRemark">顯示備注</button>
+            </td>
+            <td class="td2 col2"></td>
+            <td class="td2 col3"></td>
+            <td class="td2 col4"></td>
+            <td class="td2">
+              <!-- <button type="button" id="forColumn2">+Col2</button> -->
+            </td>
+            <td class="td2">
+              <!-- <button type="button" id="forColumn3">+Col3</button> -->
+            </td>
+            <td class="td2">
+              <!-- <button type="button" id="forColumn4">+Col4</button> -->
+            </td>
+            <td class="td2" id="sumlabel">總和:</td>
+            <td class="td2" id="p1Balance"></td>
+            <td class="td2" id="p2Balance"></td>
+            <td class="td2" id="p3Balance"></td>
+            <!-- <td class="td2" id="northBalance"></td> -->
+          </tr>
+        </tbody>
+        <!-- <tbody id="tbody3" style="display: none">
+          <tr>
+            <td class="td3 col1"></td>
+            <td class="td3 col2"></td>
+            <td class="td3 col3"></td>
+            <td class="td3 col4"></td>
+            <td class="td3"></td>
+            <td class="td3"></td>
+            <td class="td3"></td>
+            <td class="td3" id="sumlabel">胡牌次數:</td>
+            <td class="td3" id="p1win"></td>
+            <td class="td3" id="p2win"></td>
+            <td class="td3" id="p3win"></td>
+            <td class="td3" id="p4win"></td>
+          </tr>
+          <tr>
+            <td class="td3 col1"></td>
+            <td class="td3 col2"></td>
+            <td class="td3 col3"></td>
+            <td class="td3 col4"></td>
+            <td class="td3"></td>
+            <td class="td3"></td>
+            <td class="td3"></td>
+            <td class="td3" id="sumlabel">自摸次數:</td>
+            <td class="td3" id="p1zimo"></td>
+            <td class="td3" id="p2zimo"></td>
+            <td class="td3" id="p3zimo"></td>
+            <td class="td3" id="p4zimo"></td>
+          </tr>
+          <tr>
+            <td class="td3 col1"></td>
+            <td class="td3 col2"></td>
+            <td class="td3 col3"></td>
+            <td class="td3 col4"></td>
+            <td class="td3"></td>
+            <td class="td3"></td>
+            <td class="td3"></td>
+            <td class="td3" id="sumlabel">出冲次數:</td>
+            <td class="td3" id="p1cc"></td>
+            <td class="td3" id="p2cc"></td>
+            <td class="td3" id="p3cc"></td>
+            <td class="td3" id="p4cc"></td>
+          </tr>
+        </tbody> -->
+      </table>
+    </div>
+
+    <div id="remark" style="display: none">
+      <table>
+        <thead>
+          <tr>
+            <th>備注:</th>
+          </tr>
+        </thead>
+        <tbody id="tbody4"></tbody>
+      </table>
+    </div>
+
+    <div id="bottomDiv">
+      <div id="resultDiv">
+        <div id="flexRow" style="display: flex">
+          <div id="replacement" style="color: yellow">
+            局數:
+            <div id="replacementSerial" style="display: inline-block"></div>
+            圈數:
+            <div
+              id="replacementRoundNumber"
+              style="display: inline-block"
+            ></div>
+            圈:
+            <div id="replacementRound" style="display: inline-block"></div>
+            莊家:
+            <div id="replacementZhuang" style="display: inline-block"></div>
+          </div>
+          <div id="resultentry">
+            <div id="ng">
+              <div id="ng1">
+                <label class="label" id="label1" for="fanshuList">番數: </label>
+                <select
+                  class="select"
+                  onchange="fanshuControl()"
+                  name="fanshu"
+                  id="fanshuList"
+                  required
+                >
+                  <option class="option" selected disabled></option>
+                  <option class="option" value="和局">和局</option>
+                  <option class="option" value="雙響">雙響</option>
+                  <!-- <option class="option" value="三響">三響</option> -->
+                </select>
+
+                <label class="label" id="label2" for="winnerList">贏家: </label>
+                <select
+                  class="select"
+                  onchange="winnerControl()"
+                  name="winner"
+                  id="winnerList"
+                  required
+                >
+                  <option class="option" selected disabled></option>
+                  <option class="option" value="none">不適用</option>
+                  <option class="option" id="winnerPlayer1" value=""></option>
+                  <option class="option" id="winnerPlayer2" value=""></option>
+                  <option class="option" id="winnerPlayer3" value=""></option>
+                  <!-- <option class="option" id="winnerPlayer4" value=""></option> -->
+                </select>
+
+                <label class="label" id="label3" for="cczmList"
+                  >胡牌類型:
+                </label>
+                <select
+                  class="select"
+                  onchange="cczmControl()"
+                  name="cczm"
+                  id="cczmList"
+                  required
+                >
+                  <option class="option" selected disabled></option>
+                  <option class="option" value="NA">不適用</option>
+                  <option class="option" value="打出">打出</option>
+                  <option class="option" value="自摸">自摸</option>
+                  <option class="option" value="(包)出冲">(包)出冲</option>
+                  <option class="option" value="(包)自摸">(包)自摸</option>
+                </select>
+              </div>
+
+              <div id="ng2">
+                <label
+                  class="label"
+                  style="display: none"
+                  id="label4"
+                  for="ccplayerList"
+                  >出冲/包出冲玩家:
+                </label>
+                <select
+                  class="select"
+                  onchange="ccplayerControl()"
+                  style="display: none"
+                  name="ccplayer"
+                  id="ccplayerList"
+                  required
+                >
+                  <option class="option" selected disabled></option>
+                  <!-- <option class="option" value="none">不適用</option> -->
+                  <option class="option" id="ccPlayer1" value=""></option>
+                  <option class="option" id="ccPlayer2" value=""></option>
+                  <option class="option" id="ccPlayer3" value=""></option>
+                  <!-- <option class="option" id="ccPlayer4" value=""></option> -->
+                </select>
+
+                <label
+                  class="label"
+                  style="display: none"
+                  id="label5"
+                  for="baozimoplayerList"
+                  >包自摸玩家:
+                </label>
+                <select
+                  class="select"
+                  onchange="baozimoplayerControl()"
+                  style="display: none"
+                  name="baozimoplayer"
+                  id="baozimoplayerList"
+                  required
+                >
+                  <option class="option" selected disabled></option>
+                  <!-- <option class="option" value="none">不適用</option> -->
+                  <option class="option" id="bzmPlayer1" value=""></option>
+                  <option class="option" id="bzmPlayer2" value=""></option>
+                  <option class="option" id="bzmPlayer3" value=""></option>
+                  <!-- <option class="option" id="bzmPlayer4" value=""></option> -->
+                </select>
+              </div>
+
+              <div id="ng3">
+                <button
+                  class="button"
+                  id="form1Button"
+                  type="button"
+                  onclick="autoResult()"
+                >
+                  提交
+                </button>
+              </div>
+            </div>
+
+            <!-- doubel winner and triple winner dropdown list -->
+            <div id="mw" style="display: none">
+              <div id="mw1" style="display: none">
+                <label class="label" id="label13" for="cczmListSpecial"
+                  >胡牌類型:
+                </label>
+                <select
+                  class="select"
+                  name="cczmSpecial"
+                  id="cczmListSpecial"
+                  required
+                >
+                  <option class="option" selected disabled></option>
+                  <option class="option" value="(包)出冲">(包)出冲</option>
+                  <option class="option" value="(包)自摸">(包)自摸</option>
+                </select>
+
+                <label class="label" id="label12" for="ccplayerListSpecial"
+                  >輸家:
+                </label>
+                <select
+                  class="select"
+                  name="ccplayerSpecial"
+                  id="ccplayerListSpecial"
+                  required
+                >
+                  <option class="option" selected disabled></option>
+                  <option
+                    class="option"
+                    id="ccSpecialPlayer1"
+                    value=""
+                  ></option>
+                  <option
+                    class="option"
+                    id="ccSpecialPlayer2"
+                    value=""
+                  ></option>
+                  <option
+                    class="option"
+                    id="ccSpecialPlayer3"
+                    value=""
+                  ></option>
+                  <!-- <option class="option" id="ccSpecialPlayer4" value=""></option> -->
+                </select>
+
+                <button
+                  class="sidebutton"
+                  id="okbutton1"
+                  type="button"
+                  onclick="showWinner1()"
+                >
+                  輸入
+                </button>
+              </div>
+
+              <div id="mw2" style="display: none">
+                <label class="label" id="label6" for="winner1List"
+                  >贏家一:
+                </label>
+                <select class="select" name="winner1" id="winner1List" required>
+                  <option class="option" selected disabled></option>
+                  <option
+                    class="option"
+                    id="winner1ListPlayer1"
+                    value=""
+                  ></option>
+                  <option
+                    class="option"
+                    id="winner1ListPlayer2"
+                    value=""
+                  ></option>
+                  <option
+                    class="option"
+                    id="winner1ListPlayer3"
+                    value=""
+                  ></option>
+                  <!-- <option
+                  class="option"
+                  id="winner1ListPlayer4"
+                  value=""
+                ></option> -->
+                </select>
+
+                <label class="label" id="label7" for="fanshu1List"
+                  >番數:
+                </label>
+                <select class="select" name="fanshu1" id="fanshu1List" required>
+                  <option class="option" selected disabled></option>
+                </select>
+
+                <button
+                  class="sidebutton"
+                  id="editbutton2"
+                  type="button"
+                  onclick="edit()"
+                >
+                  修改
+                </button>
+                <button
+                  class="sidebutton"
+                  id="okbutton2"
+                  type="button"
+                  onclick="showWinner2()"
+                >
+                  輸入
+                </button>
+              </div>
+
+              <div id="mw3" style="display: none">
+                <label class="label" id="label8" for="winner2List"
+                  >贏家二:
+                </label>
+                <select class="select" name="winner2" id="winner2List" required>
+                  <option class="option" selected disabled></option>
+                  <option
+                    class="option"
+                    id="winner2ListPlayer1"
+                    value=""
+                  ></option>
+                  <option
+                    class="option"
+                    id="winner2ListPlayer2"
+                    value=""
+                  ></option>
+                  <option
+                    class="option"
+                    id="winner2ListPlayer3"
+                    value=""
+                  ></option>
+                  <!-- <option
+                  class="option"
+                  id="winner2ListPlayer4"
+                  value=""
+                ></option> -->
+                </select>
+
+                <label class="label" id="label9" for="fanshu2List"
+                  >番數:
+                </label>
+                <select class="select" name="fanshu2" id="fanshu2List" required>
+                  <option class="option" selected disabled></option>
+                </select>
+
+                <button
+                  class="sidebutton"
+                  id="editbutton3"
+                  type="button"
+                  onclick="edit()"
+                >
+                  修改
+                </button>
+                <button
+                  class="sidebutton"
+                  id="okbutton3"
+                  type="button"
+                  onclick="showWinner3()"
+                >
+                  輸入
+                </button>
+              </div>
+
+              <!-- <div id="mw4" style="display: none">
+              <label class="label" id="label10" for="winner3List"
+                >贏家三:
+              </label>
+              <select class="select" name="winner3" id="winner3List" required>
+                <option class="option" selected disabled></option>
+                <option
+                  class="option"
+                  id="winner3ListPlayer1"
+                  value=""
+                ></option>
+                <option
+                  class="option"
+                  id="winner3ListPlayer2"
+                  value=""
+                ></option>
+                <option
+                  class="option"
+                  id="winner3ListPlayer3"
+                  value=""
+                ></option>
+                <option
+                  class="option"
+                  id="winner3ListPlayer4"
+                  value=""
+                ></option>
+              </select>
+
+              <label class="label" id="label11" for="fanshu3List">番數: </label>
+              <select class="select" name="fanshu3" id="fanshu3List" required>
+                <option class="option" selected disabled></option>
+              </select>
+
+              <button
+                class="sidebutton"
+                id="editbutton4"
+                type="button"
+                onclick="edit()"
+              >
+                修改
+              </button>
+              <button
+                class="sidebutton"
+                id="okbutton4"
+                type="button"
+                onclick="showForm2Button()"
+              >
+                輸入
+              </button>
+            </div> -->
+
+              <div id="mw5" style="display: none">
+                <button
+                  class="belowbutton"
+                  id="editbutton5"
+                  type="button"
+                  onclick="edit()"
+                >
+                  修改
+                </button>
+                <button
+                  onclick="autoResult()"
+                  id="form2Button"
+                  class="belowbutton"
+                  type="submit"
+                >
+                  提交
+                </button>
+              </div>
+            </div>
+
+            <div id="se" style="display: none">
+              <p id="seInstruction">
+                請輸入每位玩家的輸贏金額和下一局的莊家，如果是輸家，金額必需加上負數符號“-”，核對無誤才輸入。
+              </p>
+              <div style="display: inline-block">
+                <label class="selabel" for="p1amount" id="label14"></label>
+                <input
+                  class="seinput"
+                  type="number"
+                  name="p1amount"
+                  id="p1amount"
+                  required
+                />
+              </div>
+              <div style="display: inline-block">
+                <label class="selabel" for="p2amount" id="label15"></label>
+                <input
+                  class="seinput"
+                  type="number"
+                  name="p2amount"
+                  id="p2amount"
+                  required
+                />
+              </div>
+              <div style="display: inline-block">
+                <label class="selabel" for="p3amount" id="label16"></label>
+                <input
+                  class="seinput"
+                  type="number"
+                  name="p3amount"
+                  id="p3amount"
+                  required
+                />
+              </div>
+              <!-- <div style="display: inline-block">
+              <label class="selabel" for="p4amount" id="label17"></label>
+              <input
+                class="seinput"
+                type="number"
+                step="0.1"
+                name="p4amount"
+                id="p4amount"
+                required
+              />
+            </div> -->
+              <div style="display: inline-block">
+                <label class="label" id="label18" for="">下一局莊家: </label>
+                <select
+                  class="select"
+                  name="nextZhuang"
+                  id="inputZhuang"
+                  required
+                >
+                  <option class="option" disabled selected>請選擇</option>
+                  <option
+                    class="option"
+                    id="nextZhuangPlayer1"
+                    value=""
+                  ></option>
+                  <option
+                    class="option"
+                    id="nextZhuangPlayer2"
+                    value=""
+                  ></option>
+                  <option
+                    class="option"
+                    id="nextZhuangPlayer3"
+                    value=""
+                  ></option>
+                  <!-- <option class="option" id="nextZhuangPlayer4" value=""></option> -->
+                </select>
+              </div>
+              <br />
+              <button
+                class="button"
+                id="specialEntryCancelButton"
+                type="button"
+                onclick="cancelSpecialEntry()"
+              >
+                關閉
+              </button>
+              <button
+                class="button"
+                id="specialEntrySubmit"
+                type="button"
+                onclick="seResult()"
+              >
+                提交
+              </button>
+            </div>
+          </div>
+
+          <div id="mahjongtable">
+            <div id="aroundtable">
+              <div id="row1">
+                <div id="block1"></div>
+                <div id="block2"></div>
+                <div id="block3"></div>
+              </div>
+
+              <div id="row2">
+                <div id="block4"></div>
+
+                <div id="block5">
+                  <div id="block5row1">
+                    <div id="block511"></div>
+                    <div id="block512">西</div>
+                    <div id="block513"></div>
+                  </div>
+                  <div id="block5row2">
+                    <div id="block521">北</div>
+                    <div id="block522"></div>
+                    <div id="block523">南</div>
+                  </div>
+                  <div id="block5row3">
+                    <div id="block531"></div>
+                    <div id="block532">東</div>
+                    <div id="block533"></div>
+                  </div>
+                </div>
+
+                <div id="block6"></div>
+              </div>
+
+              <div id="row3">
+                <div id="block7"></div>
+                <div id="block8"></div>
+                <div id="block9"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="lastRow" style="display: block">
+          <button
+            onclick="window.open('instruction.html', '_blank')"
+            class="button"
+            type="button"
+          >
+            輸入指示
+          </button>
+
+          <button
+            onclick="window.open('gamesetting.html', '_blank')"
+            class="button"
+            type="button"
+          >
+            檢視設定
+          </button>
+
+          <button onclick="editLastGame()" class="button" type="button">
+            修改最後一局
+          </button>
+
+          <button onclick="specialEntry()" class="button" type="button">
+            特別輸入
+          </button>
+
+          <button onclick="endGame()" class="button" type="button">
+            結束遊戲
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="copyrightDiv">
+      <p>
+        &copy; <span id="copyright"></span> bigeyedog.studio All rights
+        reserved.
+      </p>
+    </div>
+
+    <script>
+      const startYear = 2025; // Replace with your starting year
+      const currentYear = new Date().getFullYear();
+      const copyrightText =
+        startYear === currentYear
+          ? currentYear
+          : `${startYear} - ${currentYear}`;
+      document.getElementById("copyright").textContent = copyrightText;
+    </script>
+
+    <script src="gameinprogress.js" charset="utf-8"></script>
+
+    <!-- <script>
+      
+      const eastPlayer = sessionStorage.getItem("eastPlayer");
+      const southPlayer = sessionStorage.getItem("southPlayer");
+      const westPlayer = sessionStorage.getItem("westPlayer");
+      const northPlayer = sessionStorage.getItem("northPlayer");
+      const smallestfan = sessionStorage.getItem("smallestfan");
+      const biggestfan = sessionStorage.getItem("biggestfan");
+      const fullNotfull = sessionStorage.getItem("fullNotfull");
+      const passZhuang = sessionStorage.getItem("passZhuang");
+      const customFSArray = JSON.parse(sessionStorage.getItem("customFSArray"));
+      const finalzimoArray = JSON.parse(
+        sessionStorage.getItem("finalzimoArray")
+      );
+      const finalcc0Array = JSON.parse(sessionStorage.getItem("finalcc0Array"));
+      const finalcc1Array = JSON.parse(sessionStorage.getItem("finalcc1Array"));
+      const finalcc2Array = JSON.parse(sessionStorage.getItem("cc2Array"));
+      const finalcc3Array = JSON.parse(sessionStorage.getItem("finalcc3Array"));
+      const masterArray = JSON.parse(sessionStorage.getItem("masterArray"));
+      const multiplewinnerArray = JSON.parse(
+        sessionStorage.getItem("multiplewinnerArray")
+      );
+      console.log(
+        smallestfan,
+        biggestfan,
+        fullNotfull,
+        passZhuang,
+        customFSArray,
+        finalzimoArray,
+        finalcc0Array,
+        finalcc1Array,
+        finalcc2Array,
+        finalcc3Array,
+        masterArray,
+        multiplewinnerArray
+      );
+
+      const playerArray = [eastPlayer, southPlayer, westPlayer, northPlayer];
+      playerArray = playerArray.filter((item) => item !== "vacant");
+      console.log(playerArray);
+
+    </script> -->
+
+    <script>
+      //setting the page when loaded
+      //$("#r1zhuang").text(eastPlayer);
+      // const playerArray = [eastPlayer, southPlayer, westPlayer, northPlayer];
+      // playerArray = playerArray.filter((item) => item !== "vacant");
+      // console.log(playerArray);
+
+      $(
+        "#winnerPlayer1, #ccPlayer1, #bzmPlayer1, #ccSpecialPlayer1, #winner1ListPlayer1, #winner2ListPlayer1, #winner3ListPlayer1, #nextZhuangPlayer1",
+      ).text(newPlayerArray[0]);
+      $(
+        "#winnerPlayer2, #ccPlayer2, #bzmPlayer2, #ccSpecialPlayer2, #winner1ListPlayer2, #winner2ListPlayer2, #winner3ListPlayer2, #nextZhuangPlayer2",
+      ).text(newPlayerArray[1]);
+      $(
+        "#winnerPlayer3, #ccPlayer3, #bzmPlayer3, #ccSpecialPlayer3, #winner1ListPlayer3, #winner2ListPlayer3, #winner3ListPlayer3, #nextZhuangPlayer3",
+      ).text(newPlayerArray[2]);
+      // $(
+      //   "#winnerPlayer4, #ccPlayer4, #bzmPlayer4, #ccSpecialPlayer4, #winner1ListPlayer4, #winner2ListPlayer4, #winner3ListPlayer4, #nextZhuangPlayer4"
+      // ).text(newPlayerArray[0]);
+      $(
+        "#winnerPlayer1, #ccPlayer1, #bzmPlayer1, #ccSpecialPlayer1, #winner1ListPlayer1, #winner2ListPlayer1, #winner3ListPlayer1, #nextZhuangPlayer1",
+      ).val(newPlayerArray[0]);
+      $(
+        "#winnerPlayer2, #ccPlayer2, #bzmPlayer2, #ccSpecialPlayer2, #winner1ListPlayer2, #winner2ListPlayer2, #winner3ListPlayer2, #nextZhuangPlayer2",
+      ).val(newPlayerArray[1]);
+      $(
+        "#winnerPlayer3, #ccPlayer3, #bzmPlayer3, #ccSpecialPlayer3, #winner1ListPlayer3, #winner2ListPlayer3, #winner3ListPlayer3, #nextZhuangPlayer3",
+      ).val(newPlayerArray[2]);
+      // $(
+      //   "#winnerPlayer4, #ccPlayer4, #bzmPlayer4, #ccSpecialPlayer4, #winner1ListPlayer4, #winner2ListPlayer4, #winner3ListPlayer4, #nextZhuangPlayer4"
+      // ).val(newPlayerArray[0]);
+
+      // $("#label14, #block8, #th9, #td9").text(eastPlayer);
+      // $("#label15, #block6, #th10, #td10").text(southPlayer);
+      // $("#label16, #block2, #th11, #td11").text(westPlayer);
+      // $("#label17, #block4, #th12, #td12").text(northPlayer);
+
+      if (vacantIndex === 1) {
+        $("#label14, #block8, #th9, #td9").text(eastPlayer);
+        $("#label15, #block2, #th10, #td10").text(westPlayer);
+        $("#label16, #block4, #th11, #td11").text(northPlayer);
+        //$("#block6").text("Vacant");
+        //$("#block6").css("color", "brown");
+        // $("#label17, #block4, #th12, #td12").text(northPlayer);
+      } else if (vacantIndex === 2) {
+        $("#label14, #block8, #th9, #td9").text(eastPlayer);
+        $("#label15, #block6, #th10, #td10").text(southPlayer);
+        $("#label16, #block4, #th11, #td11").text(northPlayer);
+        //$("#block2").text("Vacant");
+        //$("#block2").css("color", "brown");
+        // $("#label17, #block4, #th12, #td12").text(northPlayer);
+      } else if (vacantIndex === 3) {
+        $("#label14, #block8, #th9, #td9").text(eastPlayer);
+        $("#label15, #block6, #th10, #td10").text(southPlayer);
+        $("#label16, #block2, #th11, #td11").text(westPlayer);
+        //$("#block4").text("Vacant");
+        //$("#block4").css("color", "brown");
+        // $("#label17, #block4, #th12, #td12").text(northPlayer);
+      }
+
+      $("#fullNotfull").text(fullNotfull);
+      $("#passZhuang").text(passZhuang);
+
+      // const currentRound = $("#r1round").text();
+      // $("#block522").text(currentRound);
+
+      const fsLength = customFSArray.length;
+      if (Array.isArray(customFSArray)) {
+        for (let i = 0; i < fsLength; i++) {
+          const $option = $("<option></option>")
+            .val(customFSArray[i])
+            .text(customFSArray[i]); // Visible text
+          //$("#fanshuList option[value='和局']").after($option);
+          $("#fanshuList, #fanshu1List, #fanshu2List").append($option);
+        }
+      }
+
+      const mwLength = multiplewinnerArray.length;
+      for (let i = 1; i < mwLength; i++) {
+        const tbody4 = $("#tbody4");
+        const remarkRow = $("<tr></tr>");
+        const remarkTD = $("<td></td>");
+        remarkTD.text(multiplewinnerArray[i]);
+        remarkRow.append(remarkTD);
+        $("#tbody4").append(remarkRow);
+      }
+      //$("#block8").css("color", "yellow");
+
+      const reloadLength = masterArray.length;
+      $("#replacementSerial").text(masterArray[reloadLength - 1][12]);
+      $("#replacementRoundNumber").text(masterArray[reloadLength - 1][13]);
+      $("#replacementRound").text(masterArray[reloadLength - 1][14]);
+      $("#replacementZhuang").text(masterArray[reloadLength - 1][15]);
+    </script>
+
+    <script>
+      const tbody1 = document.getElementById("tbody1");
+      const maLength = masterArray.length;
+
+      if (maLength == 1) {
+        const $row = $("<tr></tr>");
+        const column1 = $("<td></td>")
+          .text(masterArray[0][0])
+          .attr("id", "r1serial")
+          .addClass("td1 col1");
+
+        const column2 = $("<td></td>")
+          .text(masterArray[0][1])
+          .attr("id", "r1roundnumber")
+          .addClass("td1 col2");
+
+        const column3 = $("<td></td>")
+          .text(masterArray[0][2])
+          .attr("id", "r1round")
+          .addClass("td1 col3");
+
+        const column4 = $("<td></td>")
+          .text(masterArray[0][3])
+          .attr("id", "r1zhuang")
+          .addClass("td1 col4");
+
+        const column5 = $("<td></td>")
+          .attr("id", "r1fanshu")
+          .addClass("td1 col5");
+
+        const column6 = $("<td></td>")
+          .attr("id", "r1winner")
+          .addClass("td1 col6");
+
+        const column7 = $("<td></td>")
+          .attr("id", "r1eattype")
+          .addClass("td1 col7");
+
+        const column8 = $("<td></td>")
+          .attr("id", "r1ccplayer")
+          .addClass("td1 col8");
+
+        const column9 = $("<td></td>").attr("id", "r1c9").addClass("td1 col9");
+        const column10 = $("<td></td>")
+          .attr("id", "r1c10")
+          .addClass("td1 col10");
+        const column11 = $("<td></td>")
+          .attr("id", "r1c11")
+          .addClass("td1 col11");
+        // const column12 = $("<td></td>")
+        //   .attr("id", "r1c12")
+        //   .addClass("td1 col12");
+
+        $row
+          .append(column1)
+          .append(column2)
+          .append(column3)
+          .append(column4)
+          .append(column5)
+          .append(column6)
+          .append(column7)
+          .append(column8)
+          .append(column9)
+          .append(column10)
+          .append(column11);
+
+        $("#tbody1").append($row);
+
+        $("#p1Balance").text(0);
+        $("#p2Balance").text(0);
+        $("#p3Balance").text(0);
+        //$("#northBalance").text(0);
+        $("#block522").text($("#r1round").text());
+        $("#block8").css("color", "yellow");
+      } else if (maLength > 1) {
+        for (let i = 1; i < maLength; i++) {
+          const $row = $("<tr></tr>");
+          const c1ID = "r" + i + "serial";
+          const c2ID = "r" + i + "roundnumber";
+          const c3ID = "r" + i + "round";
+          const c4ID = "r" + i + "zhuang";
+          const c5ID = "r" + i + "fanshu";
+          const c6ID = "r" + i + "winner";
+          const c7ID = "r" + i + "eattype";
+          const c8ID = "r" + i + "ccplayer";
+          const c9ID = "r" + i + "c9";
+          const c10ID = "r" + i + "c10";
+          const c11ID = "r" + i + "c11";
+          //const c12ID = "r" + i + "c12";
+
+          const column1 = $("<td></td>")
+            .text(masterArray[i][0])
+            .attr("id", c1ID)
+            .addClass("td1 col1");
+
+          const column2 = $("<td></td>")
+            .text(masterArray[i][1])
+            .attr("id", c2ID)
+            .addClass("td1 col2");
+
+          const column3 = $("<td></td>")
+            .text(masterArray[i][2])
+            .attr("id", c3ID)
+            .addClass("td1 col3");
+
+          const column4 = $("<td></td>")
+            .text(masterArray[i][3])
+            .attr("id", c4ID)
+            .addClass("td1 col4");
+
+          const column5 = $("<td></td>")
+            .text(masterArray[i][4])
+            .attr("id", c5ID)
+            .addClass("td1 col5");
+          const column6 = $("<td></td>")
+            .text(masterArray[i][5])
+            .attr("id", c6ID)
+            .addClass("td1 col6");
+          const column7 = $("<td></td>")
+            .text(masterArray[i][6])
+            .attr("id", c7ID)
+            .addClass("td1 col7");
+          const column8 = $("<td></td>")
+            .text(masterArray[i][7])
+            .attr("id", c8ID)
+            .addClass("td1 col8");
+          const column9 = $("<td></td>")
+            .text(masterArray[i][8])
+            .attr("id", c9ID)
+            .addClass("td1 col9");
+          const column10 = $("<td></td>")
+            .text(masterArray[i][9])
+            .attr("id", c10ID)
+            .addClass("td1 col10");
+          const column11 = $("<td></td>")
+            .text(masterArray[i][10])
+            .attr("id", c11ID)
+            .addClass("td1 col11");
+          // const column12 = $("<td></td>")
+          //   .text(masterArray[i][11])
+          //   .attr("id", c12ID)
+          //   .addClass("td1 col12");
+
+          $row
+            .append(column1)
+            .append(column2)
+            .append(column3)
+            .append(column4)
+            .append(column5)
+            .append(column6)
+            .append(column7)
+            .append(column8)
+            .append(column9)
+            .append(column10)
+            .append(column11);
+
+          $("#tbody1").append($row);
+        }
+
+        const $row = $("<tr></tr>");
+        const c1ID = "r" + maLength + "serial";
+        const c2ID = "r" + maLength + "roundnumber";
+        const c3ID = "r" + maLength + "round";
+        const c4ID = "r" + maLength + "zhuang";
+        const c5ID = "r" + maLength + "fanshu";
+        const c6ID = "r" + maLength + "winner";
+        const c7ID = "r" + maLength + "eattype";
+        const c8ID = "r" + maLength + "ccplayer";
+        const c9ID = "r" + maLength + "c9";
+        const c10ID = "r" + maLength + "c10";
+        const c11ID = "r" + maLength + "c11";
+        //const c12ID = "r" + maLength + "c12";
+
+        const column1 = $("<td></td>")
+          .text(masterArray[maLength - 1][12])
+          .attr("id", c1ID)
+          .addClass("td1 col1");
+
+        const column2 = $("<td></td>")
+          .text(masterArray[maLength - 1][13])
+          .attr("id", c2ID)
+          .addClass("td1 col2");
+
+        const column3 = $("<td></td>")
+          .text(masterArray[maLength - 1][14])
+          .attr("id", c3ID)
+          .addClass("td1 col3");
+
+        const column4 = $("<td></td>")
+          .text(masterArray[maLength - 1][15])
+          .attr("id", c4ID)
+          .addClass("td1 col4");
+
+        const column5 = $("<td></td>").attr("id", c5ID).addClass("td1 col5");
+        const column6 = $("<td></td>").attr("id", c6ID).addClass("td1 col6");
+        const column7 = $("<td></td>").attr("id", c7ID).addClass("td1 col7");
+        const column8 = $("<td></td>").attr("id", c8ID).addClass("td1 col8");
+        const column9 = $("<td></td>").attr("id", c9ID).addClass("td1 col9");
+        const column10 = $("<td></td>").attr("id", c10ID).addClass("td1 col10");
+        const column11 = $("<td></td>").attr("id", c11ID).addClass("td1 col11");
+        //const column12 = $("<td></td>").attr("id", c12ID).addClass("td1 col12");
+
+        $row
+          .append(column1)
+          .append(column2)
+          .append(column3)
+          .append(column4)
+          .append(column5)
+          .append(column6)
+          .append(column7)
+          .append(column8)
+          .append(column9)
+          .append(column10)
+          .append(column11);
+
+        $("#tbody1").append($row);
+
+        $("#p1Balance").text(Number(masterArray[maLength - 1][16].toFixed(2)));
+        $("#p2Balance").text(Number(masterArray[maLength - 1][17].toFixed(2)));
+        $("#p3Balance").text(Number(masterArray[maLength - 1][18].toFixed(2)));
+        //$("#northBalance").text(masterArray[maLength - 1][19]);
+
+        const balanceArray = [
+          Number(masterArray[maLength - 1][16].toFixed(2)),
+          Number(masterArray[maLength - 1][17].toFixed(2)),
+          Number(masterArray[maLength - 1][18].toFixed(2)),
+          // Number(masterArray[maLength - 1][19]),
+        ];
+        const balanceCellID = [
+          "#p1Balance",
+          "#p2Balance",
+          "#p3Balance",
+          // "#northBalance",
+        ];
+        for (let i = 0; i < 3; i++) {
+          if (balanceArray[i] < 0) {
+            $(balanceCellID[i]).css("color", "brown");
+          } else {
+            $(balanceCellID[i]).css("color", "black");
+          }
+        }
+
+        $("#block522").text(masterArray[maLength - 1][14]);
+
+        const nextZhuang = masterArray[maLength - 1][15];
+        if (nextZhuang === eastPlayer) {
+          $("#block8").css("color", "yellow");
+          $("#block2, #block4, #block6").css("color", "white");
+        } else if (nextZhuang === southPlayer) {
+          $("#block6").css("color", "yellow");
+          $("#block2, #block4, #block8").css("color", "white");
+        } else if (nextZhuang === westPlayer) {
+          $("#block2").css("color", "yellow");
+          $("#block4, #block6, #block8").css("color", "white");
+        } else if (nextZhuang === northPlayer) {
+          $("#block4").css("color", "yellow");
+          $("#block2, #block6, #block8").css("color", "white");
+        }
+      }
+    </script>
+
+    <script>
+      function autoResult() {
+        //storing last row values into constants
+        const tbody1 = document.getElementById("tbody1");
+        const lastRow = tbody1.rows[tbody1.rows.length - 1];
+        const serial = Number(lastRow.cells[0].textContent);
+        const roundnumber = Number(lastRow.cells[1].textContent);
+        const round = lastRow.cells[2].textContent;
+        const zhuang = lastRow.cells[3].textContent;
+        console.log(serial, roundnumber, round, zhuang);
+
+        //finding the index number of inputFanshu and the values of the same index number in other arrays
+        const inputFanshu = $("#fanshuList").val();
+        console.log(inputFanshu);
+
+        const fanshuID = "#r" + serial + "fanshu";
+        const winnerID = "#r" + serial + "winner";
+        const eattypeID = "#r" + serial + "eattype";
+        const ccplayerID = "#r" + serial + "ccplayer";
+        const p1ID = "#r" + serial + "c9";
+        const p2ID = "#r" + serial + "c10";
+        const p3ID = "#r" + serial + "c11";
+        //const northID = "#r" + serial + "c12";
+        console.log(
+          fanshuID,
+          winnerID,
+          eattypeID,
+          ccplayerID,
+          p1ID,
+          p2ID,
+          p3ID,
+          //northID
+        );
+
+        let winner = "";
+        let winner1 = "";
+        let winner2 = "";
+        //let winner3 = "";
+
+        if (inputFanshu === "和局") {
+          $(fanshuID).text("---");
+          $(winnerID).text("---");
+          $(eattypeID).text("和局");
+          $(ccplayerID).text("---");
+          $(p1ID).text(0);
+          $(p2ID).text(0);
+          $(p3ID).text(0);
+          //$(northID).text(0);
+        } else if (inputFanshu === "雙響") {
+          const cczmtype = document.getElementById("cczmListSpecial").value;
+          const ccplayerSpecial = document.getElementById(
+            "ccplayerListSpecial",
+          ).value;
+          winner1 = document.getElementById("winner1List").value;
+          winner2 = document.getElementById("winner2List").value;
+          const fanshu1 = document.getElementById("fanshu1List").value;
+          const fanshu2 = document.getElementById("fanshu2List").value;
+          console.log(
+            cczmtype,
+            ccplayerSpecial,
+            winner1,
+            winner2,
+            fanshu1,
+            fanshu2,
+          );
+
+          $(fanshuID).text("雙響");
+          $(winnerID).text("備注");
+          $(eattypeID).text(cczmtype);
+          $(ccplayerID).text(ccplayerSpecial);
+
+          let winner1Index = "";
+          let winner2Index = "";
+          let ccplayerSpecialIndex = "";
+          //let nccplayerIndex = "";
+
+          for (let i = 0; i < 3; i++) {
+            if (winner1 === newPlayerArray[i]) {
+              winner1Index = i;
+            }
+          }
+          console.log(winner1Index);
+
+          for (let i = 0; i < 3; i++) {
+            if (winner2 === newPlayerArray[i]) {
+              winner2Index = i;
+            }
+          }
+          console.log(winner2Index);
+
+          for (let i = 0; i < 3; i++) {
+            if (ccplayerSpecial === newPlayerArray[i]) {
+              ccplayerSpecialIndex = i;
+            }
+          }
+          console.log(ccplayerSpecialIndex);
+
+          const winner1Column = winner1Index + 9;
+          const winner2Column = winner2Index + 9;
+          const ccplayerSpecialColumn = ccplayerSpecialIndex + 9;
+          console.log(winner1Column, winner2Column, ccplayerSpecialColumn);
+
+          const winner1ID = "#r" + serial + "c" + winner1Column;
+          const winner2ID = "#r" + serial + "c" + winner2Column;
+          const ccplayerSpecialID = "#r" + serial + "c" + ccplayerSpecialColumn;
+          console.log(winner1ID, winner2ID, ccplayerSpecialID);
+
+          const inputFanshu1 = $("#fanshu1List").val();
+          const inputFanshu2 = $("#fanshu2List").val();
+          console.log(inputFanshu1, inputFanshu2);
+
+          let indexNumber1 = "";
+          for (let i = 0; i < fsLength; i++) {
+            if (inputFanshu1 === customFSArray[i]) {
+              indexNumber1 = i;
+            }
+          }
+          let indexNumber2 = "";
+          for (let i = 0; i < fsLength; i++) {
+            if (inputFanshu2 === customFSArray[i]) {
+              indexNumber2 = i;
+            }
+          }
+          console.log(indexNumber1, indexNumber2);
+
+          const zimoAmount1 = finalzimoArray[indexNumber1];
+          const cc0Amount1 = finalcc0Array[indexNumber1];
+          const cc1Amount1 = finalcc1Array[indexNumber1];
+          const cc2Amount1 = finalcc2Array[indexNumber1];
+          const cc3Amount1 = finalcc3Array[indexNumber1];
+          const zimoAmount2 = finalzimoArray[indexNumber2];
+          const cc0Amount2 = finalcc0Array[indexNumber2];
+          const cc1Amount2 = finalcc1Array[indexNumber2];
+          const cc2Amount2 = finalcc2Array[indexNumber2];
+          const cc3Amount2 = finalcc3Array[indexNumber2];
+          console.log(
+            zimoAmount1,
+            cc0Amount1,
+            cc1Amount1,
+            cc2Amount1,
+            cc3Amount1,
+            zimoAmount2,
+            cc0Amount2,
+            cc1Amount2,
+            cc2Amount2,
+            cc3Amount2,
+          );
+
+          if (cczmtype === "(包)自摸") {
+            $(winner1ID).text(Number((zimoAmount1 * 2).toFixed(2)));
+            $(winner2ID).text(Number((zimoAmount2 * 2).toFixed(2)));
+            $(ccplayerSpecialID).text(
+              Number((-zimoAmount1 * 2 + -zimoAmount2 * 2).toFixed(2)),
+            );
+          } else if (cczmtype === "(包)出冲") {
+            $(winner1ID).text(Number(cc1Amount1.toFixed(2)));
+            $(winner2ID).text(Number(cc1Amount2.toFixed(2)));
+            $(ccplayerSpecialID).text(
+              Number((-cc1Amount1 + -cc1Amount2).toFixed(2)),
+            );
+          }
+
+          const tbody4 = document.getElementById("tbody4");
+          const remarkRow = $("<tr></tr>");
+          const remarkTD = $("<td></td>");
+          const winner1Total = Number($(winner1ID).text());
+          const winner2Total = Number($(winner2ID).text());
+          const ccplayerTotal = Number(
+            (winner1Total + winner2Total).toFixed(2),
+          );
+
+          const multipleWinner =
+            "局數: " +
+            serial +
+            "; 類型: " +
+            "雙響" +
+            "/" +
+            cczmtype +
+            "; 輸家/總金額: " +
+            ccplayerSpecial +
+            "/" +
+            ccplayerTotal +
+            "; 贏家一/番數/金額: " +
+            winner1 +
+            "/" +
+            fanshu1 +
+            "/" +
+            winner1Total +
+            "; 贏家二/番數/金額: " +
+            winner2 +
+            "/" +
+            fanshu2 +
+            "/" +
+            winner2Total;
+          console.log(multipleWinner);
+
+          remarkTD.text(multipleWinner);
+          remarkRow.append(remarkTD);
+          $("#tbody4").append(remarkRow);
+          //$("#remark").css("display", "block");
+          multiplewinnerArray.push(multipleWinner);
+          sessionStorage.setItem(
+            "multiplewinnerArray",
+            JSON.stringify(multiplewinnerArray),
+          );
+        } else {
+          const inputIDarray = ["#fanshuList", "#winnerList", "#cczmList"];
+          for (let i = 0; i < 3; i++) {
+            if (
+              $(inputIDarray[i]).val() === null ||
+              $(inputIDarray[i]).val() === ""
+            ) {
+              alert("請選擇番數,贏家和胡牌類型。");
+              return;
+            }
+          }
+
+          const cczmtype = $("#cczmList").val();
+          const ccplayer = $("#ccplayerList").val();
+          winner = $("#winnerList").val();
+          const fanshu = $("#fanshuList").val();
+          const bzmplayer = $("#baozimoplayerList").val();
+          console.log(cczmtype, ccplayer, winner, fanshu, bzmplayer);
+
+          if (cczmtype === "打出" || cczmtype === "(包)出冲") {
+            if (
+              $("#ccplayerList").val() === null ||
+              $("#ccplayerList").val() === ""
+            ) {
+              alert("請選擇出冲/包出冲玩家名字。");
+              return;
+            }
+          }
+
+          if (cczmtype === "(包)自摸") {
+            if (
+              $("#baozimoplayerList").val() === null ||
+              $("#baozimoplayerList").val() === ""
+            ) {
+              alert("請選擇包自摸玩家名字。");
+              return;
+            }
+          }
+
+          $(fanshuID).text(fanshu);
+          $(winnerID).text(winner);
+          $(eattypeID).text(cczmtype);
+          if (cczmtype === "(包)自摸") {
+            $(ccplayerID).text(bzmplayer);
+          } else if (cczmtype === "自摸") {
+            $(ccplayerID).text("---");
+          } else {
+            $(ccplayerID).text(ccplayer);
+          }
+
+          let indexNumber = "";
+          for (let i = 0; i < fsLength; i++) {
+            if (fanshu === customFSArray[i]) {
+              indexNumber = i;
+            }
+          }
+          console.log(indexNumber);
+
+          const zimoAmount = finalzimoArray[indexNumber];
+          const cc0Amount = finalcc0Array[indexNumber];
+          const cc1Amount = finalcc1Array[indexNumber];
+          const cc2Amount = finalcc2Array[indexNumber];
+          const cc3Amount = finalcc3Array[indexNumber];
+          console.log(
+            indexNumber,
+            zimoAmount,
+            cc0Amount,
+            cc1Amount,
+            cc2Amount,
+            cc3Amount,
+          );
+
+          let winnerIndex = "";
+          let ccplayerIndex = "";
+          let nccplayer1Index = "";
+          let nccplayer2Index = "";
+          let bzmplayerIndex = "";
+          // const playerArray = [
+          //   eastPlayer,
+          //   southPlayer,
+          //   westPlayer,
+          //   northPlayer,
+          // ];
+
+          for (let i = 0; i < 3; i++) {
+            if (winner === newPlayerArray[i]) {
+              winnerIndex = i;
+            }
+          }
+          console.log(winnerIndex);
+
+          for (let i = 0; i < 3; i++) {
+            if (ccplayer === newPlayerArray[i]) {
+              ccplayerIndex = i;
+            }
+          }
+          console.log(ccplayerIndex);
+
+          for (let i = 0; i < 3; i++) {
+            if (bzmplayer === newPlayerArray[i]) {
+              bzmplayerIndex = i;
+            }
+          }
+          console.log(bzmplayerIndex);
+
+          const nccplayerIndexArray = [];
+          for (let i = 0; i < 3; i++) {
+            if (
+              newPlayerArray[i] !== winner &&
+              newPlayerArray[i] !== ccplayer &&
+              newPlayerArray[i] !== bzmplayer
+            ) {
+              nccplayerIndexArray.push(i);
+            }
+          }
+          console.log(nccplayerIndexArray);
+
+          // for (let i = 0; i < 3; i++) {
+          //   if (nccplayer === newPlayerArray[i]) {
+          //     nccplayerIndex = i;
+          //   }
+          // }
+          // console.log(nccplayerIndex);
+
+          const winnerColumn = winnerIndex + 9;
+          const ccplayerColumn = ccplayerIndex + 9;
+          const nccplayer1Column = Number(nccplayerIndexArray[0]) + 9;
+          const nccplayer2Column = Number(nccplayerIndexArray[1]) + 9;
+          const bzmplayerColumn = bzmplayerIndex + 9;
+          console.log(
+            winnerColumn,
+            ccplayerColumn,
+            nccplayer1Column,
+            nccplayer2Column,
+            bzmplayerColumn,
+          );
+          const winnerCellID = "#r" + serial + "c" + winnerColumn;
+          const ccplayerCellID = "#r" + serial + "c" + ccplayerColumn;
+          const nccplayer1ID = "#r" + serial + "c" + nccplayer1Column;
+          const nccplayer2ID = "#r" + serial + "c" + nccplayer2Column;
+          const bzmplayerID = "#r" + serial + "c" + bzmplayerColumn;
+          console.log(
+            winnerCellID,
+            ccplayerCellID,
+            nccplayer1ID,
+            nccplayer2ID,
+            bzmplayerID,
+          );
+
+          if (cczmtype === "自摸") {
+            $(winnerCellID).text(Number((zimoAmount * 2).toFixed(2)));
+            $(nccplayer1ID).text(Number(-zimoAmount.toFixed(2)));
+            $(nccplayer2ID).text(Number(-zimoAmount.toFixed(2)));
+            //$(nccplayer3ID).text(Number(-zimoAmount));
+          } else if (cczmtype === "打出" && fullNotfull === "全銃") {
+            $(winnerCellID).text(Number((cc1Amount + cc0Amount).toFixed(2)));
+            $(ccplayerCellID).text(Number(-cc1Amount.toFixed(2)));
+            $(nccplayer1ID).text(Number(-cc0Amount.toFixed(2)));
+            //$(nccplayer2ID).text(Number(-cc0Amount));
+          } else if (cczmtype === "打出" && fullNotfull === "半銃") {
+            $(winnerCellID).text(Number((cc2Amount + cc3Amount).toFixed(2)));
+            $(ccplayerCellID).text(Number(-cc2Amount.toFixed(2)));
+            $(nccplayer1ID).text(Number(-cc3Amount.toFixed(2)));
+            //$(nccplayer2ID).text(Number(-cc3Amount));
+          } else if (cczmtype === "(包)出冲") {
+            $(winnerCellID).text(Number((cc1Amount + cc0Amount).toFixed(2)));
+            $(ccplayerCellID).text(Number(-cc1Amount.toFixed(2)));
+            $(nccplayer1ID).text(Number(-cc0Amount.toFixed(2)));
+            //$(nccplayer2ID).text(Number(-cc0Amount));
+          } else if (cczmtype === "(包)自摸") {
+            $(winnerCellID).text(
+              Number((zimoAmount * 2 + cc0Amount).toFixed(2)),
+            );
+            $(bzmplayerID).text(Number((-zimoAmount * 2).toFixed(2)));
+            $(nccplayer1ID).text(Number(-cc0Amount.toFixed(2)));
+            //$(nccplayer2ID).text(Number(-cc0Amount));
+          }
+        }
+
+        const nextSerial = serial + 1;
+        console.log(nextSerial);
+
+        const newPlayerArrayPlus = [
+          newPlayerArray[0],
+          newPlayerArray[1],
+          newPlayerArray[2],
+          newPlayerArray[0],
+        ];
+        const roundArray = ["東", "南", "西", "北", "東"];
+
+        let zhuangIndex = "";
+        for (let i = 0; i < 3; i++) {
+          if (zhuang === newPlayerArray[i]) {
+            zhuangIndex = i;
+          }
+        }
+
+        let nextZhuang = "";
+        if (passZhuang === "和牌冧莊") {
+          if (inputFanshu === "和局") {
+            nextZhuang = zhuang;
+          } else {
+            if (zhuang === winner || zhuang === winner1 || zhuang === winner2) {
+              nextZhuang = zhuang;
+            } else {
+              nextZhuang = newPlayerArrayPlus[zhuangIndex + 1];
+            }
+          }
+        } else if (passZhuang === "和牌過莊") {
+          if (inputFanshu === "和局") {
+            nextZhuang = newPlayerArrayPlus[zhuangIndex + 1];
+          } else {
+            if (zhuang === winner || zhuang === winner1 || zhuang === winner2) {
+              nextZhuang = zhuang;
+            } else {
+              nextZhuang = newPlayerArrayPlus[zhuangIndex + 1];
+            }
+          }
+        }
+        console.log(nextZhuang);
+
+        let roundIndex = "";
+        for (let i = 0; i < 4; i++) {
+          if (roundArray[i] === round) {
+            roundIndex = i;
+          }
+        }
+        console.log(roundIndex);
+
+        let nextRoundNumber = "";
+        let nextRound = "";
+
+        if (vacantIndex === 3) {
+          if (zhuang === westPlayer && nextZhuang === eastPlayer) {
+            nextRoundNumber = roundnumber + 1;
+            nextRound = roundArray[roundIndex + 1];
+          } else {
+            nextRoundNumber = roundnumber;
+            nextRound = round;
+          }
+        } else {
+          if (zhuang === northPlayer && nextZhuang === eastPlayer) {
+            nextRoundNumber = roundnumber + 1;
+            nextRound = roundArray[roundIndex + 1];
+          } else {
+            nextRoundNumber = roundnumber;
+            nextRound = round;
+          }
+        }
+
+        $("#block522").text(nextRound);
+
+        $("#replacementSerial").text(nextSerial);
+        $("#replacementRoundNumber").text(nextRoundNumber);
+        $("#replacementRound").text(nextRound);
+        $("#replacementZhuang").text(nextZhuang);
+
+        //const currentZhuang = $("#r1zhuang").text();
+        if (nextZhuang === eastPlayer) {
+          $("#block8").css("color", "yellow");
+          $("#block2, #block4, #block6").css("color", "white");
+        } else if (nextZhuang === southPlayer) {
+          $("#block6").css("color", "yellow");
+          $("#block2, #block4, #block8").css("color", "white");
+        } else if (nextZhuang === westPlayer) {
+          $("#block2").css("color", "yellow");
+          $("#block4, #block6, #block8").css("color", "white");
+        } else if (nextZhuang === northPlayer) {
+          $("#block4").css("color", "yellow");
+          $("#block2, #block6, #block8").css("color", "white");
+        }
+
+        const $row = $("<tr></tr>");
+        const c1ID = "r" + nextSerial + "serial";
+        const c2ID = "r" + nextSerial + "roundnumber";
+        const c3ID = "r" + nextSerial + "round";
+        const c4ID = "r" + nextSerial + "zhuang";
+        const c5ID = "r" + nextSerial + "fanshu";
+        const c6ID = "r" + nextSerial + "winner";
+        const c7ID = "r" + nextSerial + "eattype";
+        const c8ID = "r" + nextSerial + "ccplayer";
+        const c9ID = "r" + nextSerial + "c9";
+        const c10ID = "r" + nextSerial + "c10";
+        const c11ID = "r" + nextSerial + "c11";
+        //const c12ID = "r" + nextSerial + "c12";
+
+        const column1 = $("<td></td>")
+          .text(nextSerial)
+          .attr("id", c1ID)
+          .addClass("td1 col1");
+
+        const column2 = $("<td></td>")
+          .text(nextRoundNumber)
+          .attr("id", c2ID)
+          .addClass("td1 col2");
+
+        const column3 = $("<td></td>")
+          .text(nextRound)
+          .attr("id", c3ID)
+          .addClass("td1 col3");
+
+        const column4 = $("<td></td>")
+          .text(nextZhuang)
+          .attr("id", c4ID)
+          .addClass("td1 col4");
+
+        const column5 = $("<td></td>").attr("id", c5ID).addClass("td1 col5");
+
+        const column6 = $("<td></td>").attr("id", c6ID).addClass("td1 col6");
+
+        const column7 = $("<td></td>").attr("id", c7ID).addClass("td1 col7");
+
+        const column8 = $("<td></td>").attr("id", c8ID).addClass("td1 col8");
+
+        const column9 = $("<td></td>").attr("id", c9ID).addClass("td1 col9");
+
+        const column10 = $("<td></td>").attr("id", c10ID).addClass("td1 col10");
+
+        const column11 = $("<td></td>").attr("id", c11ID).addClass("td1 col11");
+
+        //const column12 = $("<td></td>").attr("id", c12ID).addClass("td1 col12");
+
+        $row
+          .append(column1)
+          .append(column2)
+          .append(column3)
+          .append(column4)
+          .append(column5)
+          .append(column6)
+          .append(column7)
+          .append(column8)
+          .append(column9)
+          .append(column10)
+          .append(column11);
+
+        $("#tbody1").append($row);
+
+        let p1Balance = 0;
+        let p2Balance = 0;
+        let p3Balance = 0;
+        //let northBalance = 0;
+        for (let i = 1; i <= serial; i++) {
+          const col9val =
+            Number(document.getElementById("r" + i + "c9").textContent) || 0;
+          const col10val =
+            Number(document.getElementById("r" + i + "c10").textContent) || 0;
+          const col11val =
+            Number(document.getElementById("r" + i + "c11").textContent) || 0;
+          // const col12val =
+          //   Number(document.getElementById("r" + i + "c12").textContent) || 0;
+          console.log(col9val, col10val, col11val);
+          p1Balance += col9val;
+          p2Balance += col10val;
+          p3Balance += col11val;
+          //northBalance += col12val;
+        }
+        console.log(serial, p1Balance, p2Balance, p3Balance);
+
+        const p1Balance2Decimal = Number(Number(p1Balance).toFixed(2));
+        const p2Balance2Decimal = Number(Number(p2Balance).toFixed(2));
+        const p3Balance2Decimal = Number(Number(p3Balance).toFixed(2));
+
+        $("#p1Balance").text(p1Balance2Decimal);
+        $("#p2Balance").text(p2Balance2Decimal);
+        $("#p3Balance").text(p3Balance2Decimal);
+        //$("#northBalance").text(northBalance);
+
+        const balanceArray = [
+          p1Balance2Decimal,
+          p2Balance2Decimal,
+          p3Balance2Decimal,
+          //northBalance,
+        ];
+        const balanceCellID = [
+          "#p1Balance",
+          "#p2Balance",
+          "#p3Balance",
+          //"#northBalance",
+        ];
+        for (let i = 0; i < 3; i++) {
+          if (balanceArray[i] < 0) {
+            $(balanceCellID[i]).css("color", "brown");
+          } else {
+            $(balanceCellID[i]).css("color", "black");
+          }
+        }
+
+        document.querySelectorAll("select").forEach((select) => {
+          Array.from(select.options).forEach((option) => {
+            option.selected = option.defaultSelected;
+          });
+        });
+
+        $("#ng1, #ng3").css("display", "block");
+        $("#label2, #label3, #winnerList, #cczmList").css(
+          "display",
+          "inline-block",
+        );
+        $("#ng2, #mw, #se").css("display", "none");
+
+        const col5text = $(fanshuID).text();
+        const col6text = $(winnerID).text();
+        const col7text = $(eattypeID).text();
+        const col8text = $(ccplayerID).text();
+        const col9text = $(p1ID).text();
+        const col10text = $(p2ID).text();
+        const col11text = $(p3ID).text();
+        const col12text = "default";
+
+        const col9text2Decimal = Number(Number(col9text).toFixed(2));
+        const col10text2Decimal = Number(Number(col10text).toFixed(2));
+        const col11text2Decimal = Number(Number(col11text).toFixed(2));
+        const col12text2Decimal = Number(Number(col12text).toFixed(2));
+
+        const newArray = [
+          serial,
+          roundnumber,
+          round,
+          zhuang,
+          col5text,
+          col6text,
+          col7text,
+          col8text,
+          col9text2Decimal,
+          col10text2Decimal,
+          col11text2Decimal,
+          col12text2Decimal,
+          nextSerial,
+          nextRoundNumber,
+          nextRound,
+          nextZhuang,
+          p1Balance2Decimal,
+          p2Balance2Decimal,
+          p3Balance2Decimal,
+          "default",
+        ];
+        masterArray.push(newArray);
+        console.log(masterArray);
+        sessionStorage.setItem("masterArray", JSON.stringify(masterArray));
+
+        window.scrollTo({
+          top: Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight,
+          ),
+          behavior: "smooth",
+        });
+      }
+    </script>
+
+    <script>
+      function seResult() {
+        const inputIDarray = [
+          "#p1amount",
+          "#p2amount",
+          "#p3amount",
+          // "#p4amount",
+          "#inputZhuang",
+        ];
+        for (let i = 0; i < 4; i++) {
+          if (
+            $(inputIDarray[i]).val() === null ||
+            $(inputIDarray[i]).val() === ""
+          ) {
+            alert("請輸入所有玩家的輸贏金額和選擇下一個荘家。");
+            return;
+          }
+        }
+
+        // const p1Input = document.getElementById("p1amount");
+        // const p2Input = document.getElementById("p2amount");
+        // const p3Input = document.getElementById("p3amount");
+        // const p4Input = document.getElementById("p4amount");
+        // const zhuangInput = document.getElementById("inputZhuang");
+        // p1Input.required = true;
+        // p2Input.required = true;
+        // p3Input.required = true;
+        // p4Input.required = true;
+        // zhuangInput.required = true;
+
+        // if (
+        //   p1Input.required ||
+        //   p2Input.required ||
+        //   p3Input.required ||
+        //   p4Input.required ||
+        //   zhuangInput.required
+        // ) {
+        //   alert("請輸入所有玩家的輸贏金額和選擇下一個荘家。");
+        //   return;
+        // } else {
+        const inputAmountSum =
+          parseFloat($("#p1amount").val()) * 100 +
+          parseFloat($("#p2amount").val()) * 100 +
+          parseFloat($("#p3amount").val()) * 100;
+        console.log(inputAmountSum);
+
+        if (inputAmountSum !== 0) {
+          const userConfirmed = confirm("输入的輸贏金額總和不等於零。繼續？");
+          if (!userConfirmed) {
+            return;
+          }
+        }
+
+        //storing last row values into constants
+        const tbody1 = document.getElementById("tbody1");
+        const lastRow = tbody1.rows[tbody1.rows.length - 1];
+        const serial = Number(lastRow.cells[0].textContent);
+        const roundnumber = Number(lastRow.cells[1].textContent);
+        const round = lastRow.cells[2].textContent;
+        const zhuang = lastRow.cells[3].textContent;
+        console.log(serial, roundnumber, round, zhuang);
+
+        const fanshuID = "#r" + serial + "fanshu";
+        const winnerID = "#r" + serial + "winner";
+        const eattypeID = "#r" + serial + "eattype";
+        const ccplayerID = "#r" + serial + "ccplayer";
+        const p1ID = "#r" + serial + "c9";
+        const p2ID = "#r" + serial + "c10";
+        const p3ID = "#r" + serial + "c11";
+        // const northID = "#r" + serial + "c12";
+        console.log(
+          fanshuID,
+          winnerID,
+          eattypeID,
+          ccplayerID,
+          p1ID,
+          p2ID,
+          p3ID,
+        );
+
+        $(fanshuID).text("特別輸入");
+        $(winnerID).text("---");
+        $(eattypeID).text("---");
+        $(ccplayerID).text("---");
+        $(p1ID).text(parseFloat($("#p1amount").val()));
+        $(p2ID).text(parseFloat($("#p2amount").val()));
+        $(p3ID).text(parseFloat($("#p3amount").val()));
+        //$(northID).text(parseFloat($("#p4amount").val()));
+
+        const inputZhuang = $("#inputZhuang").val();
+        console.log(inputZhuang);
+
+        const nextSerial = serial + 1;
+        console.log(nextSerial);
+
+        const newPlayerArrayPlus = [
+          newPlayerArray[0],
+          newPlayerArray[1],
+          newPlayerArray[2],
+          newPlayerArray[0],
+        ];
+        const roundArray = ["東", "南", "西", "北", "東"];
+
+        let roundIndex = "";
+        for (let i = 0; i < 4; i++) {
+          if (roundArray[i] === round) {
+            roundIndex = i;
+          }
+        }
+        console.log(roundIndex);
+
+        let nextRoundNumber = "";
+        let nextRound = "";
+
+        if (vacantIndex === 3) {
+          if (zhuang === westPlayer && nextZhuang === eastPlayer) {
+            nextRoundNumber = roundnumber + 1;
+            nextRound = roundArray[roundIndex + 1];
+          } else {
+            nextRoundNumber = roundnumber;
+            nextRound = round;
+          }
+        } else {
+          if (zhuang === northPlayer && nextZhuang === eastPlayer) {
+            nextRoundNumber = roundnumber + 1;
+            nextRound = roundArray[roundIndex + 1];
+          } else {
+            nextRoundNumber = roundnumber;
+            nextRound = round;
+          }
+        }
+        $("#block522").text(nextRound);
+
+        $("#replacementSerial").text(nextSerial);
+        $("#replacementRoundNumber").text(nextRoundNumber);
+        $("#replacementRound").text(nextRound);
+        $("#replacementZhuang").text(inputZhuang);
+
+        //const currentZhuang = $("#r1zhuang").text();
+        if (inputZhuang === eastPlayer) {
+          $("#block8").css("color", "yellow");
+          $("#block2, #block4, #block6").css("color", "white");
+        } else if (inputZhuang === southPlayer) {
+          $("#block6").css("color", "yellow");
+          $("#block2, #block4, #block8").css("color", "white");
+        } else if (inputZhuang === westPlayer) {
+          $("#block2").css("color", "yellow");
+          $("#block4, #block6, #block8").css("color", "white");
+        } else if (inputZhuang === northPlayer) {
+          $("#block4").css("color", "yellow");
+          $("#block2, #block6, #block8").css("color", "white");
+        }
+
+        const $row = $("<tr></tr>");
+        const c1ID = "r" + nextSerial + "serial";
+        const c2ID = "r" + nextSerial + "roundnumber";
+        const c3ID = "r" + nextSerial + "round";
+        const c4ID = "r" + nextSerial + "zhuang";
+        const c5ID = "r" + nextSerial + "fanshu";
+        const c6ID = "r" + nextSerial + "winner";
+        const c7ID = "r" + nextSerial + "eattype";
+        const c8ID = "r" + nextSerial + "ccplayer";
+        const c9ID = "r" + nextSerial + "c9";
+        const c10ID = "r" + nextSerial + "c10";
+        const c11ID = "r" + nextSerial + "c11";
+        //const c12ID = "r" + nextSerial + "c12";
+
+        const column1 = $("<td></td>")
+          .text(nextSerial)
+          .attr("id", c1ID)
+          .addClass("td1 col1");
+
+        const column2 = $("<td></td>")
+          .text(nextRoundNumber)
+          .attr("id", c2ID)
+          .addClass("td1 col2");
+
+        const column3 = $("<td></td>")
+          .text(nextRound)
+          .attr("id", c3ID)
+          .addClass("td1 col3");
+
+        const column4 = $("<td></td>")
+          .text(inputZhuang)
+          .attr("id", c4ID)
+          .addClass("td1 col4");
+
+        const column5 = $("<td></td>").attr("id", c5ID).addClass("td1 col5");
+
+        const column6 = $("<td></td>").attr("id", c6ID).addClass("td1 col6");
+
+        const column7 = $("<td></td>").attr("id", c7ID).addClass("td1 col7");
+
+        const column8 = $("<td></td>").attr("id", c8ID).addClass("td1 col8");
+
+        const column9 = $("<td></td>").attr("id", c9ID).addClass("td1 col9");
+
+        const column10 = $("<td></td>").attr("id", c10ID).addClass("td1 col10");
+
+        const column11 = $("<td></td>").attr("id", c11ID).addClass("td1 col11");
+
+        //const column12 = $("<td></td>").attr("id", c12ID).addClass("td1 col12");
+
+        $row
+          .append(column1)
+          .append(column2)
+          .append(column3)
+          .append(column4)
+          .append(column5)
+          .append(column6)
+          .append(column7)
+          .append(column8)
+          .append(column9)
+          .append(column10)
+          .append(column11);
+
+        $("#tbody1").append($row);
+
+        let p1Balance = 0;
+        let p2Balance = 0;
+        let p3Balance = 0;
+        //let northBalance = 0;
+        for (let i = 1; i <= serial; i++) {
+          const col9val =
+            Number(document.getElementById("r" + i + "c9").textContent) || 0;
+          const col10val =
+            Number(document.getElementById("r" + i + "c10").textContent) || 0;
+          const col11val =
+            Number(document.getElementById("r" + i + "c11").textContent) || 0;
+          // const col12val =
+          //   Number(document.getElementById("r" + i + "c12").textContent) || 0;
+          console.log(col9val, col10val, col11val);
+          p1Balance += col9val;
+          p2Balance += col10val;
+          p3Balance += col11val;
+          //northBalance += col12val;
+        }
+        console.log(
+          serial,
+          p1Balance,
+          p2Balance,
+          p3Balance,
+          //northBalance
+        );
+
+        const p1Balance2Decimal = Number(Number(p1Balance).toFixed(2));
+        const p2Balance2Decimal = Number(Number(p2Balance).toFixed(2));
+        const p3Balance2Decimal = Number(Number(p3Balance).toFixed(2));
+
+        $("#p1Balance").text(p1Balance2Decimal);
+        $("#p2Balance").text(p2Balance2Decimal);
+        $("#p3Balance").text(p3Balance2Decimal);
+        //$("#northBalance").text(northBalance);
+
+        const balanceArray = [
+          p1Balance2Decimal,
+          p2Balance2Decimal,
+          p3Balance2Decimal,
+        ];
+        const balanceCellID = ["#p1Balance", "#p2Balance", "#p3Balance"];
+        for (let i = 0; i < 3; i++) {
+          if (balanceArray[i] < 0) {
+            $(balanceCellID[i]).css("color", "brown");
+          } else {
+            $(balanceCellID[i]).css("color", "black");
+          }
+        }
+
+        document.querySelectorAll("select").forEach((select) => {
+          Array.from(select.options).forEach((option) => {
+            option.selected = option.defaultSelected;
+          });
+        });
+
+        $("#p1amount").val("");
+        $("#p2amount").val("");
+        $("#p3amount").val("");
+        //$("#p4amount").val("");
+
+        $("#ng, #ng1, #ng3").css("display", "block");
+        $("#label2, #label3, #winnerList, #cczmList").css(
+          "display",
+          "inline-block",
+        );
+        $("#ng2, #mw, #se").css("display", "none");
+
+        const col5text = $(fanshuID).text();
+        const col6text = $(winnerID).text();
+        const col7text = $(eattypeID).text();
+        const col8text = $(ccplayerID).text();
+        const col9text = $(p1ID).text();
+        const col10text = $(p2ID).text();
+        const col11text = $(p3ID).text();
+        const col12text = "default";
+
+        const col9text2Decimal = Number(Number(col9text).toFixed(2));
+        const col10text2Decimal = Number(Number(col10text).toFixed(2));
+        const col11text2Decimal = Number(Number(col11text).toFixed(2));
+        const col12text2Decimal = Number(Number(col12text).toFixed(2));
+
+        const newArray = [
+          serial,
+          roundnumber,
+          round,
+          zhuang,
+          col5text,
+          col6text,
+          col7text,
+          col8text,
+          col9text2Decimal,
+          col10text2Decimal,
+          col11text2Decimal,
+          col12text2Decimal,
+          nextSerial,
+          nextRoundNumber,
+          nextRound,
+          inputZhuang,
+          p1Balance2Decimal,
+          p2Balance2Decimal,
+          p3Balance2Decimal,
+          "default",
+        ];
+        masterArray.push(newArray);
+        console.log(masterArray);
+        sessionStorage.setItem("masterArray", JSON.stringify(masterArray));
+
+        window.scrollTo({
+          top: Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight,
+          ),
+          behavior: "smooth",
+        });
+      }
+    </script>
+
+    <script>
+      function editLastGame() {
+        if (confirm("遊戲最後一局的資料將被刪除, 確認修改？")) {
+          const tbody1 = document.getElementById("tbody1");
+          if (tbody1.rows.length > 1) {
+            tbody1.deleteRow(-1); // Deletes the last row of this specific <tbody>
+
+            const lastRow = tbody1.rows[tbody1.rows.length - 1];
+            const serial = Number(lastRow.cells[0].textContent);
+            const zhuang = lastRow.cells[3].textContent;
+            const round = lastRow.cells[2].textContent;
+            console.log(serial, zhuang, round);
+
+            const fanshuID = "#r" + serial + "fanshu";
+            const winnerID = "#r" + serial + "winner";
+            const eattypeID = "#r" + serial + "eattype";
+            const ccplayerID = "#r" + serial + "ccplayer";
+            const p1ID = "#r" + serial + "c9";
+            const p2ID = "#r" + serial + "c10";
+            const p3ID = "#r" + serial + "c11";
+            //const northID = "#r" + serial + "c12";
+            console.log(
+              fanshuID,
+              winnerID,
+              eattypeID,
+              ccplayerID,
+              p1ID,
+              p2ID,
+              p3ID,
+            );
+
+            if ($(fanshuID).text() === "雙響") {
+              multiplewinnerArray.pop();
+              $("tbody4 tr:last").remove();
+              sessionStorage.setItem(
+                "multiplewinnerArray",
+                JSON.stringify(multiplewinnerArray),
+              );
+            }
+
+            $(fanshuID).text("");
+            $(winnerID).text("");
+            $(eattypeID).text("");
+            $(ccplayerID).text("");
+            $(p1ID).text("");
+            $(p2ID).text("");
+            $(p3ID).text("");
+            //$(northID).text("");
+
+            $("#block522").text(round);
+
+            let p1Balance = 0;
+            let p2Balance = 0;
+            let p3Balance = 0;
+            //let northBalance = 0;
+            for (let i = 1; i <= serial - 1; i++) {
+              const col9val =
+                Number(document.getElementById("r" + i + "c9").textContent) ||
+                0;
+              const col10val =
+                Number(document.getElementById("r" + i + "c10").textContent) ||
+                0;
+              const col11val =
+                Number(document.getElementById("r" + i + "c11").textContent) ||
+                0;
+              // const col12val =
+              //   Number(document.getElementById("r" + i + "c12").textContent) ||
+              //   0;
+              console.log(col9val, col10val, col11val);
+              p1Balance += col9val;
+              p2Balance += col10val;
+              p3Balance += col11val;
+              //northBalance += col12val;
+            }
+            console.log(serial, p1Balance, p2Balance, p3Balance);
+
+            const p1Balance2Decimal = Number(p1Balance.toFixed(2));
+            const p2Balance2Decimal = Number(p2Balance.toFixed(2));
+            const p3Balance2Decimal = Number(p3Balance.toFixed(2));
+
+            $("#p1Balance").text(p1Balance2Decimal);
+            $("#p2Balance").text(p2Balance2Decimal);
+            $("#p3Balance").text(p3Balance2Decimal);
+            //$("#northBalance").text(northBalance);
+
+            const balanceArray = [
+              p1Balance2Decimal,
+              p2Balance2Decimal,
+              p3Balance2Decimal,
+            ];
+            const balanceCellID = ["#p1Balance", "#p2Balance", "#p3Balance"];
+            for (let i = 0; i < 3; i++) {
+              if (balanceArray[i] < 0) {
+                $(balanceCellID[i]).css("color", "brown");
+              } else {
+                $(balanceCellID[i]).css("color", "black");
+              }
+            }
+
+            if (zhuang === eastPlayer) {
+              $("#block8").css("color", "yellow");
+              $("#block2, #block4, #block6").css("color", "white");
+            } else if (zhuang === southPlayer) {
+              $("#block6").css("color", "yellow");
+              $("#block2, #block4, #block8").css("color", "white");
+            } else if (zhuang === westPlayer) {
+              $("#block2").css("color", "yellow");
+              $("#block4, #block6, #block8").css("color", "white");
+            } else if (zhuang === northPlayer) {
+              $("#block4").css("color", "yellow");
+              $("#block2, #block6, #block8").css("color", "white");
+            }
+          }
+
+          masterArray.pop();
+          console.log(masterArray);
+          sessionStorage.setItem("masterArray", JSON.stringify(masterArray));
+          location = location;
+        } else {
+          return;
+        }
+
+        window.scrollTo({
+          top: Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight,
+          ),
+          behavior: "smooth",
+        });
+      }
+    </script>
+    <script>
+      $("#forRemark").click(function () {
+        const remarkDiv = $("#remark");
+
+        if (remarkDiv.css("display") === "none") {
+          remarkDiv.css("display", "block");
+          $(this).text("隱藏備注");
+        } else {
+          remarkDiv.css("display", "none");
+          $(this).text("顯示備注");
+        }
+      });
+
+      $("#forColumn2").click(function () {
+        const column2 = $(".col2");
+
+        if (column2.css("display") === "none") {
+          column2.css("display", "inline-block");
+          $(this).text("-Col2");
+        } else {
+          column2.css("display", "none");
+          $(this).text("+Col2");
+        }
+      });
+
+      $("#forColumn3").click(function () {
+        const column3 = $(".col3");
+
+        if (column3.css("display") === "none") {
+          column3.css("display", "inline-block");
+          $(this).text("-Col3");
+        } else {
+          column3.css("display", "none");
+          $(this).text("+Col3");
+        }
+      });
+
+      $("#forColumn4").click(function () {
+        const column4 = $(".col4");
+
+        if (column4.css("display") === "none") {
+          column4.css("display", "inline-block");
+          $(this).text("-Col4");
+        } else {
+          column4.css("display", "none");
+          $(this).text("+Col4");
+        }
+      });
+
+      // $("#stat").click(function () {
+      //   const tbody3 = $("#tbody3");
+
+      //   if (tbody3.css("display") === "none") {
+      //     tbody3.css("display", "table-row-group");
+      //     $(this).text("隱藏統計");
+      //   } else {
+      //     tbody3.css("display", "none");
+      //     $(this).text("顯示統計");
+      //   }
+      // });
+
+      function toggleColumns() {
+        $(".col1, .col2, .col3, .col4").css("display", "none");
+      }
+    </script>
+
+    <!-- <script>
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: "smooth",
+      });
+    </script> -->
+
+    <script>
+      window.scrollTo({
+        top: Math.max(
+          document.body.scrollHeight,
+          document.documentElement.scrollHeight,
+        ),
+        behavior: "smooth",
+      });
+    </script>
+
+    <!-- <script>
+      window.addEventListener("load", function () {
+        window.scrollTo({
+          top: document.body.scrollHeight,
+          behavior: "smooth",
+        });
+      });
+    </script> -->
+
+    <!-- <script>
+      let p1win = 0;
+      let p2win = 0;
+      let p3win = 0;
+      let p4win = 0;
+      for (i = 1; i < serial + 1; i++) {
+        const c9ID = "#r" + i + "c9";
+        const c10ID = "#r" + i + "c10";
+        const c11ID = "#r" + i + "c11";
+        const c12ID = "#r" + i + "c12";
+        const c9Value = $(c9ID).val();
+        const c10Value = $(c10ID).val();
+        const c11Value = $(c11ID).val();
+        const c12Value = $(c12ID).val();
+        if (c9Value > 0) {
+          p1win += 1;
+        }
+        if (c10Value > 0) {
+          p2win += 1;
+        }
+        if (c11Value > 0) {
+          p3win += 1;
+        }
+        if (c12Value > 0) {
+          p4win += 1;
+        }
+      }
+      console.log(p1win, p2win, p3win, p4win);
+    </script> -->
+  </body>
+</html>
